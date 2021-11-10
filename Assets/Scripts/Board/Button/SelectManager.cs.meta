@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: c598716b9506fab40abd850eb4f3956b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - characterNameText: {instanceID: 0}
+  - backgroundText: {instanceID: 0}
+  - characterText: {instanceID: 0}
+  - fireCharacterImage: {instanceID: 0}
+  - iceCharacterImage: {instanceID: 0}
+  - grassCharacterImage: {instanceID: 0}
+  - lightCharacterImage: {instanceID: 0}
+  - darkCharacterImage: {instanceID: 0}
+  - basicCharacterImage: {instanceID: 0}
+  - characterImage: {instanceID: 0}
+  - characterArrow: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

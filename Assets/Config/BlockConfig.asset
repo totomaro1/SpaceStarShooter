@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec1f94de82904afe85d04099e4565df, type: 3}
+  m_Name: BlockConfig
+  m_EditorClassIdentifier: 
+  dropSpeed:
+  - 0.2
+  - 0.3
+  - 0.35
+  - 0.4
+  - 0.425
+  - 0.45
+  - 0.475
+  - 0.5
+  - 0.525
+  basicBlockSprites:
+  - {fileID: 21300000, guid: 1b857e0d971989548aa90bcbeabdcf4e, type: 3}
+  - {fileID: 21300000, guid: 8a55f1cd7d0938841a3679d5ad8067eb, type: 3}
+  - {fileID: 21300000, guid: dd6d128d47f08814d88d32dae16219c9, type: 3}
+  - {fileID: 21300000, guid: b92f4559246585c4c8babc9dd8ba1944, type: 3}
+  - {fileID: 21300000, guid: 2e80a34c09aa8344faedb1fe07906385, type: 3}
+  blockColors:
+  - {r: 0.8470589, g: 0.227451, b: 0.098039225, a: 1}
+  - {r: 0, g: 0.50980395, b: 0.7607844, a: 1}
+  - {r: 0.5411765, g: 0.7803922, b: 0.20784315, a: 1}
+  - {r: 1, g: 0.75294125, b: 0, a: 1}
+  - {r: 0.43921572, g: 0.18823531, b: 0.627451, a: 1}
+  explosion: {fileID: 2861438460690957853, guid: 75410d45c592a4dddb004a44411868e1,
+    type: 3}

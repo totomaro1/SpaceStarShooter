@@ -1,9 +1,7 @@
-# BingleStarter
+# SpaceStarShooter
 
-Unity를 이용해서 3 Match 퍼즐 게임을 개발하는 과정을 공유합니다.  
+Unity를 이용해서 3 Match 퍼즐 게임을 개발하는 과정을 공유합니다.
 개발중인 개인 프로젝트의 실제 코드 일부를 발췌하여 개발과정을 공유하고자 합니다.
-
-<img src="https://1.bp.blogspot.com/-_AgMscYYw6w/Xd5oHI0zW1I/AAAAAAAAAn8/0tuzT5w9Wr4MLU7TKPcqeqL9_t09wXgJQCLcBGAsYHQ/s1600/RespawnBlocksAfterClear.gif"></img>
 
 ### 구현 목표
 * 3, 4, 5 기본 매칭 
@@ -36,32 +34,6 @@ Unity를 이용해서 3 Match 퍼즐 게임을 개발하는 과정을 공유합�
 * __소스 Repository__ : Github
 * __UML 도구__ : StarUML
 
-### 블로그 편집 환경
-* __동영상 GIF 캡쳐__ : GIF Brewery
-* __HTML & CSS 테스트__ : IntelliJ + Visual Studio Code for Mac, 크롬
-* __이미지 캡쳐__ : MacOS 기본 캡쳐
-* __기타__ : PowerPoint
-
 ### 소스 코드 다운로드  
 모든 소스 코드와 문서는 아래에서 다운로드 할 수 있습니다.  
-https://github.com/ninez-entertain/BingleStarter  
 아래 git command로 복제(clone) 후 사용하세요.
-```bash
-git clone https://github.com/ninez-entertain/BingleStarter.git
-```
-또한, 각 진행 과정은 개별 branch로 제공되며 소스코드 다운로드 후에 각 스텝 별로 브랜치를 이용할 수 있습니다.  
-예를 들어, 세번째 장의 소스를 보기 위해서 "step-3" 브랜치로 이동할 수 있습니다.
-```bash
-git checkout step-3
-```
-### UML 다이어그램 파일 보기  
- 프로젝트 설계에 사용하는 UML 도구는 오픈소스 프로그램 StarUML을 사용합니다.  
-https://sourceforge.net/projects/staruml/ 에서 프로그램을 다운받을 수 있습니다.
-
-```bash
-UML 파일 위치 : Assets/Doc/BingleStart.uml
-```
-
----
-문의사항 및 잘못된 부분, 추가 의견은 댓글 및 메일(ninez.entertain@gmail.com)으로 부탁드립니다.  
-많은 지적과 관심 부탁드립니다^^

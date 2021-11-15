@@ -1,7 +1,6 @@
-# SpaceStarShooter
+# Space Star Shooter
 
-Unity를 이용해서 3 Match 퍼즐 게임을 개발하는 과정을 공유합니다.
-개발중인 개인 프로젝트의 실제 코드 일부를 발췌하여 개발과정을 공유하고자 합니다.
+Unity를 이용해서 3 Match 퍼즐 게임을 공유합니다.
 
 ### 구현 목표
 * 3, 4, 5 기본 매칭 

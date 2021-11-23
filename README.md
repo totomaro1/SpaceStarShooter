@@ -59,3 +59,4 @@ Unity를 이용해서 3 Match 퍼즐 게임을 공유합니다.
 * __소스 Repository__ : Github
 
 ### 게임 다운로드  
+https://docs.google.com/uc?export=download&id=1wb4_4N_gJMpQQFaEjskoZ5pEXuDXj04V

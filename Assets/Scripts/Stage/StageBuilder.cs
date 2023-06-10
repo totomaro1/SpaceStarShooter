@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
-using Ninez.Board;
+using Totomaro.Board;
 
-namespace Ninez.Stage
+namespace Totomaro.Stage
 {
     public class StageBuilder
     {

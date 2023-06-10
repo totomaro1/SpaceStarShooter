@@ -1,20 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Stage;
-using Ninez.Core;
+using Totomaro.Stage;
+using Totomaro.Core;
 using UnityEngine.UI;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     public class ButtonManager : MonoBehaviour
     {
         GameObject player;
         GameObject stat;
 
-        PlayerBehaviour playerScript;
+        PlayerBehaviour playerMove;
         PlayerEffectBehaviour playerEffectScript;
-        StageController playerSent;
+        StageController playerKick;
         //TouchEvaluator playerCo;
 
         //kick관련
@@ -23,125 +23,179 @@ namespace Ninez.Board
         public GameObject kickButton1;
         public GameObject kickButton2;
 
+        public GameObject pauseUI;
+
         //정보를 보낼 주소
         public void init()
         {
             player = GameObject.FindGameObjectWithTag("Player");
-            playerScript = player.GetComponent<PlayerBehaviour>();
+            playerMove = player.GetComponent<PlayerBehaviour>();
             //player = GameObject.FindGameObjectWithTag("PlayerEffect");
             //playerEffectScript = player.GetComponent<PlayerEffectBehaviour>();
             stat = GameObject.Find("Board");
-            playerSent = stat.GetComponent<StageController>();
+            playerKick = stat.GetComponent<StageController>();
         }
 
-        //각 방향의 방향 버튼 누르고 있는 동안 동작 및 마지막으로 이동한 방향을 기준으로 캐릭터의 방향 설정
-
-        public void LeftClick()
+        void Update()
         {
-            if (callKickCommand)
+
+            if (Input.GetKeyDown(KeyCode.A)) //Left
             {
-                playerSent.inputKick = true;
-                playerSent.direction = 2;
+                if (callKickCommand)
+                {
+                    playerKick.inputKick = true;
+                    playerKick.direction = 2;
+                }
+                else
+                {
+                    playerMove.inputLeft = true; //키 땠을 때
+                    playerMove.direction = 2;
+                }
             }
-            else
+
+            if (Input.GetKeyDown(KeyCode.D)) //Right
             {
-                playerScript.inputLeft = true; //키 땠을 때
-                playerScript.direction = 2;
-                //playerEffectScript.inputLeft = true;
-                //playerEffectScript.direction = 2;
-            }
-        }
 
-        public void RightClick()
-        {
-            if (callKickCommand)
+                if (callKickCommand)
+                {
+                    playerKick.inputKick = true;
+                    playerKick.direction = 0;
+                }
+                else
+                {
+                    playerMove.inputRight = true;
+                    playerMove.direction = 0;
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.W)) //위
             {
-                playerSent.inputKick = true;
-                playerSent.direction = 0;
+                if (callKickCommand)
+                {
+                    playerKick.inputKick = true;
+                    playerKick.direction = 1;
+                }
+                else
+                {
+                    playerMove.inputUp = true;
+                    playerMove.direction = 1;
+                }
             }
-            else
+
+            if (Input.GetKeyDown(KeyCode.S)) //아래
             {
-                playerScript.inputRight = true;
-                playerScript.direction = 0;
-                //playerEffectScript.inputRight = true;
-                //playerEffectScript.direction = 0;
-
-
+                if (callKickCommand)
+                {
+                    playerKick.inputKick = true;
+                    playerKick.direction = Constants.DIRECTION_DOWN;
+                }
+                else
+                {
+                    playerMove.inputDown = true;
+                    playerMove.direction = Constants.DIRECTION_DOWN;
+                }
             }
-        }
-
-        public void UpClick()
-        {
-            if (callKickCommand)
+            //
+            if (Input.GetButtonDown("Fire1") && !ActionManager.isSwipeRunning && Time.timeScale != 0)
             {
-                playerSent.inputKick = true;
-                playerSent.direction = 1;
+                Invoke("WaitForBulletChange", 0.01f);
+
+                if (player)
+                {
+                    Vector3 inputMouse = Input.mousePosition;
+
+                    float playerToMouseX = Input.mousePosition.x - (960 + player.transform.position.x * 120);
+                    float playerToMouseY = Input.mousePosition.y - (540 + player.transform.position.y * 120);
+
+                    if (playerToMouseY < 0 && Mathf.Abs(playerToMouseY) - Mathf.Abs(playerToMouseX) > 0)
+                    {
+                        playerKick.inputKick = true;
+                        playerKick.direction = Constants.DIRECTION_DOWN;
+                        playerMove.kickDirection = Constants.DIRECTION_DOWN;
+                    }
+
+                    if (playerToMouseY > 0 && Mathf.Abs(playerToMouseY) - Mathf.Abs(playerToMouseX) > 0)
+                    {
+                        playerKick.inputKick = true;
+                        playerKick.direction = Constants.DIRECTION_UP;
+                        playerMove.kickDirection = Constants.DIRECTION_UP;
+                    }
+
+                    if (playerToMouseX < 0 && Mathf.Abs(playerToMouseX) - Mathf.Abs(playerToMouseY) > 0)
+                    {
+                        playerKick.inputKick = true;
+                        playerKick.direction = Constants.DIRECTION_LEFT;
+                        playerMove.kickDirection = Constants.DIRECTION_LEFT;
+                    }
+
+                    if (playerToMouseX > 0 && Mathf.Abs(playerToMouseX) - Mathf.Abs(playerToMouseY) > 0)
+                    {
+                        playerKick.inputKick = true;
+                        playerKick.direction = Constants.DIRECTION_RIGHT;
+                        playerMove.kickDirection = Constants.DIRECTION_RIGHT;
+                    }
+
+                    playerMove.playerBulletLimit = 1;
+                }
             }
-            else
+
+            if (Input.GetButtonDown("Fire2") && Time.timeScale != 0 && player)
             {
-                playerScript.inputUp = true;
-                playerScript.direction = 1;
-                //playerEffectScript.inputUp = true;
-                //playerEffectScript.direction = 1;
-            }
-        }
+                playerMove.inputSkill = true;
 
-        public void DownClick()
-        {
-            if (callKickCommand)
+                Vector3 inputMouse = Input.mousePosition;
+
+                float playerToMouseX = Input.mousePosition.x - (960 + player.transform.position.x * 120);
+                float playerToMouseY = Input.mousePosition.y - (540 + player.transform.position.y * 120);
+
+                if (playerToMouseY < 0 && Mathf.Abs(playerToMouseY) - Mathf.Abs(playerToMouseX) > 0)
+                {
+                    playerMove.skillDirection = Constants.DIRECTION_DOWN;
+                }
+
+                if (playerToMouseY > 0 && Mathf.Abs(playerToMouseY) - Mathf.Abs(playerToMouseX) > 0)
+                {
+                    playerMove.skillDirection = Constants.DIRECTION_UP;
+                }
+
+                if (playerToMouseX < 0 && Mathf.Abs(playerToMouseX) - Mathf.Abs(playerToMouseY) > 0)
+                {
+                    playerMove.skillDirection = Constants.DIRECTION_LEFT;
+                }
+
+                if (playerToMouseX > 0 && Mathf.Abs(playerToMouseX) - Mathf.Abs(playerToMouseY) > 0)
+                {
+                    playerMove.skillDirection = Constants.DIRECTION_RIGHT;
+                }
+
+                playerMove.playerBulletLimit = 1;
+            }
+
+
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                playerSent.inputKick = true;
-                playerSent.direction = 3;
-            }
-            else
-            {
-                playerScript.inputDown = true;
-                playerScript.direction = 3;
-                //playerEffectScript.inputDown = true;
-                //playerEffectScript.direction = 3;
+                pauseUI.SetActive(true);
+
+                Time.timeScale = 0;
             }
         }
 
-        public void KickClick()
+        public void Resume()
         {
-            callKickCommand = true;
-            kickButton1.SetActive(false);
-            kickButton2.SetActive(true);
+            pauseUI.SetActive(false);
+
+            Time.timeScale = 1;
+
         }
 
-        public void Kick2Click()
+        void WaitForBulletChange()
         {
-            callKickCommand = false;
-            kickButton1.SetActive(true);
-            kickButton2.SetActive(false);
+            playerMove.inputKick = true;
         }
 
-        public void SkillClickFire()
+        void WaitForSkillChange()
         {
-            playerScript.inputSkillFire = true;
+            playerMove.inputSkill = true;
         }
-
-        public void SkillClickIce()
-        {
-            playerScript.inputSkillIce = true;
-        }
-
-        public void SkillClickGrass()
-        {
-            playerScript.inputSkillGrass = true;
-        }
-
-        public void SkillClickLight()
-        {
-            playerScript.inputSkillLight = true;
-        }
-
-        public void SkillClickDark()
-        {
-            playerScript.inputSkillDark = true;
-        }
-
-
-
     }
 }

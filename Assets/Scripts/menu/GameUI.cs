@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
-using Ninez.Board;
+using Totomaro.Board;
 
-namespace Ninez.Stage
+namespace Totomaro.Stage
 {
     public class GameUI : MonoBehaviour
     {
@@ -25,12 +25,18 @@ namespace Ninez.Stage
             if (LifeControl.lifeGauge <= 0)
             {
                 OnGameOver();
+                MonsterGenerator.noRegen = true;
             }
 
-            if (MonsterGenerator.currentMonster >= 20 && MonsterGenerator.limitMode == true && limitModeFlag == true)
+            if (MonsterGenerator.currentMonster >= 30 && MonsterGenerator.limitMode == true && limitModeFlag == true)
             {
                 LifeControl.lifeGauge = 0;
                 limitModeFlag = false;
+            }
+
+            if (MonsterGenerator.currentMonster >= 80)
+            {
+                LifeControl.lifeGauge = 0;
             }
         }
 
@@ -61,6 +67,7 @@ namespace Ninez.Stage
             PlayerGenerator.playery = 4;
             MonsterGenerator.currentMonster = 0;
             MonsterGenerator.countMonster = 0;
+            MonsterGenerator.noRegen = false;
             PlayerBehaviour.playerDamaged = false;
             Time.timeScale = 1;
             SceneManager.LoadScene("TitleScene");

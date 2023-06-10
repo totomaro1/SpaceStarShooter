@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3386760572374099242}
   - component: {fileID: 1356053272774334252}
   - component: {fileID: 5700969519616750807}
+  - component: {fileID: 1312778468394539925}
   m_Layer: 0
   m_Name: PlayerGrass
   m_TagString: Player
@@ -71,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 184376645
-  m_SortingLayer: 5
+  m_SortingLayer: 7
   m_SortingOrder: 1
   m_Sprite: {fileID: 4781521616069399765, guid: 172042d8e7976c64a893d03372d2b2ee,
     type: 3}
@@ -122,6 +123,7 @@ MonoBehaviour:
   inputDown: 0
   inputKick: 0
   inputMove: 0
+  inputSkill: 0
   inputSkillFire: 0
   inputSkillIce: 0
   inputSkillGrass: 0
@@ -129,7 +131,35 @@ MonoBehaviour:
   inputSkillDark: 0
   direction: 0
   PrevDirection: 0
+  kickDirection: 0
+  bulletFire: {fileID: 4701147489389463035, guid: ea007d4bc2a3cca4ebf402506ee8b774,
+    type: 3}
+  bulletIce: {fileID: 4701147489389463035, guid: b0b4e024e56aa8d439fa3726f14699af,
+    type: 3}
+  bulletGrass: {fileID: 4701147489389463035, guid: 7d4155eddae45984ea6c9c53832f1d45,
+    type: 3}
+  bulletLight: {fileID: 4701147489389463035, guid: 4f2fddb5dfb68a244ba052b9f8affde1,
+    type: 3}
+  bulletDark: {fileID: 4701147489389463035, guid: 3785fc28d8ca7cc48b95dd6e9e3ec37d,
+    type: 3}
+  playerBulletLimit: 0
   playerCol: 0
   playerRow: 0
   skillEffectPrefab: {fileID: 6915082817537180214, guid: 0cd399ddbfff2714b9cfc2e681771546,
     type: 3}
+--- !u!58 &1312778468394539925
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296871052556751812}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5555556

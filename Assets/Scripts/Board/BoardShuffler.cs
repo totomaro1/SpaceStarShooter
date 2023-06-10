@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Core;
+using Totomaro.Core;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     using BlockVectorKV = KeyValuePair<Block, Vector2Int>;
 

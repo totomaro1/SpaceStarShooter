@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Board;
+using Totomaro.Board;
 
-namespace Ninez.Util
+namespace Totomaro.Util
 {
     //GameObject.Find("ButtonManager").GetComponent<ButtonManager>().)\
     //player = GameObject.FindGameObjectWithTag("Player");

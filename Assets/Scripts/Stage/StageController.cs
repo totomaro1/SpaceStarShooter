@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Util;
-using Ninez.Board;
+using Totomaro.Util;
+using Totomaro.Board;
 
-namespace Ninez.Stage
+namespace Totomaro.Stage
 {
     public class StageController : MonoBehaviour
     {
@@ -23,7 +23,7 @@ namespace Ninez.Stage
 
         public int direction = 0;
         public static int p_col = 4;
-        public static int p_row = 8;
+        public static int p_row = 4;
         public static int col = 0;
         public static int row = 0;
         //Event Members
@@ -84,6 +84,7 @@ namespace Ninez.Stage
         public int playerCol;
         public int playerRow;
         public int direct;
+        public bool inputSkill;
 
         public Swipe ChangeLoc(int direction)
         {
@@ -105,8 +106,11 @@ namespace Ninez.Stage
 
                 inputKick = false;
                 ButtonManager.callKickCommand = false;
-                buttonScript.kickButton1.SetActive(true);
-                buttonScript.kickButton2.SetActive(false);
+            }
+            
+            if (inputSkill)
+            {
+                m_ActionManager.DoSkillAction(p_row, p_col);
             }
 
             if(ButtonManager.callKickCommand == true)

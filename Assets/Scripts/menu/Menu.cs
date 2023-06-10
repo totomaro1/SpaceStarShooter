@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
-using Ninez.Util;
+using Totomaro.Util;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Ninez.Board;
+using Totomaro.Board;
 
 public class Menu : MonoBehaviour
 {

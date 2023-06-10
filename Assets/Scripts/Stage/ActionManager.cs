@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Ninez.Util;
-using Ninez.Board;
+using Totomaro.Util;
+using Totomaro.Board;
 using UnityEngine;
 
-namespace Ninez.Stage
+namespace Totomaro.Stage
 {
     /**
      * 플레이어의 액션을 처리하는 클래스
@@ -15,7 +15,7 @@ namespace Ninez.Stage
         Stage m_Stage;                  
         MonoBehaviour m_MonoBehaviour;  //코루틴 호출시 필요한 MonoBehaviour
 
-        bool m_bRunning;                //액션 실행 상태 : 실행중인 경우 true
+        public static bool isSwipeRunning;             //액션 실행 상태 : 실행중인 경우 true
 
         public static bool isSpecialClear = false;
 
@@ -55,9 +55,9 @@ namespace Ninez.Stage
          */
         IEnumerator CoDoSwipeAction(int nRow, int nCol, Swipe swipeDir)
         {
-            if (!m_bRunning)  //다른 액션이 수행 중이면 PASS
+            if (!isSwipeRunning)  //다른 액션이 수행 중이면
             {
-                m_bRunning = true;    //액션 실행 상태 ON
+                isSwipeRunning = true;    //액션 실행 상태 ON
 
                 SoundManager.instance.PlayOneShot(Clip.Chomp);
 
@@ -72,9 +72,19 @@ namespace Ninez.Stage
                     yield return EvaluateBoard(bMatchBlock);
                 }
 
-                m_bRunning = false;  //액션 실행 상태 OFF
+                isSwipeRunning = false;  //액션 실행 상태 OFF
             }
             yield break;
+        }
+
+        public void DoSkillAction(int nRow, int nCol)
+        {
+            StartCoroutine(CoDoSkillAction(nRow, nCol));
+        }
+
+        IEnumerator CoDoSkillAction(int nRow, int nCol)
+        {
+            yield return m_Stage.CoDoSkillAction(nRow, nCol);
         }
 
         /*

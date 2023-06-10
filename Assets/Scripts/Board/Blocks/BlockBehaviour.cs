@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Scriptable;
+using Totomaro.Scriptable;
+using UnityEngine.UI;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     public class BlockBehaviour : MonoBehaviour
     {

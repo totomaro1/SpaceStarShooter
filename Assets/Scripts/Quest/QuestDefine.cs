@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Ninez.Quest
+namespace Totomaro.Quest
 {
     public enum MatchType
     {

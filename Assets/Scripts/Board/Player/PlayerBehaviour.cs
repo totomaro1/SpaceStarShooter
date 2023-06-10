@@ -1,14 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Ninez.Board;
-using Ninez.Core;
-using Ninez.Stage;
-using Ninez.Util;
-
+using Totomaro.Board;
+using Totomaro.Core;
+using Totomaro.Stage;
+using Totomaro.Util;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     public class PlayerBehaviour : MonoBehaviour
     {
@@ -32,6 +32,7 @@ namespace Ninez.Board
         public bool inputDown = false;
         public bool inputKick = false;
         public bool inputMove = false;
+        public bool inputSkill = false;
         public bool inputSkillFire = false;
         public bool inputSkillIce = false;
         public bool inputSkillGrass = false;
@@ -42,7 +43,18 @@ namespace Ninez.Board
 
         public int direction = 0; // 캐릭터의 방향 left = 2, right = 0, up = 1, down = 3
         public int PrevDirection = 0;
+        public int kickDirection = 0;
+        public int skillDirection = 0;
 
+        public GameObject bulletFire;
+        public GameObject bulletIce;
+        public GameObject bulletGrass;
+        public GameObject bulletLight;
+        public GameObject bulletDark;
+
+        GameObject bullet;
+
+        public int playerBulletLimit = 0;
 
         //PlayerMove 관련
         public bool isMoving { get; set; }
@@ -55,7 +67,7 @@ namespace Ninez.Board
 
         //Player 깜빡임 관련
 
-        public bool isBlink { get; set; }
+        public static bool isBlink { get; set; }
         public static Vector3 currentTransformScale;
 
         //Player 애니메이션
@@ -65,6 +77,8 @@ namespace Ninez.Board
         //Skill 관련
         public GameObject skillEffectPrefab;
         GameObject skillEffect;
+
+        StageController m_Board;
 
         void Start()
         {
@@ -103,7 +117,7 @@ namespace Ninez.Board
 
                 SoundManager.instance.PlayOneShot(Clip.CharacterButton);
 
-                if (direction == Constants.PLAYERMOVE_LEFT)
+                if (direction == Constants.DIRECTION_LEFT)
                 {
                     int nCol = PlayerGenerator.playerx + 4;
                     int nRow = PlayerGenerator.playery + 4;
@@ -131,7 +145,7 @@ namespace Ninez.Board
 
                 SoundManager.instance.PlayOneShot(Clip.CharacterButton);
 
-                if (direction == Constants.PLAYERMOVE_RIGHT)
+                if (direction == Constants.DIRECTION_RIGHT)
                 {
                     int nCol = PlayerGenerator.playerx + 4;
                     int nRow = PlayerGenerator.playery + 4;
@@ -160,7 +174,7 @@ namespace Ninez.Board
 
                 SoundManager.instance.PlayOneShot(Clip.CharacterButton);
 
-                if (direction == Constants.PLAYERMOVE_UP)
+                if (direction == Constants.DIRECTION_UP)
                 {
                     int nCol = PlayerGenerator.playerx + 4;
                     int nRow = PlayerGenerator.playery + 4;
@@ -188,7 +202,7 @@ namespace Ninez.Board
 
                 SoundManager.instance.PlayOneShot(Clip.CharacterButton);
 
-                if (direction == Constants.PLAYERMOVE_DOWN)
+                if (direction == Constants.DIRECTION_DOWN)
                 {
                     int nCol = PlayerGenerator.playerx + 4;
                     int nRow = PlayerGenerator.playery + 4;
@@ -208,199 +222,261 @@ namespace Ninez.Board
                 }
             }
 
-            //스킬
-
             if (inputSkillFire)
             {
                 inputSkillFire = false;
 
-                int SkillRange = 1;
+                int SkillRange = 4;
 
                 //불 캐릭터 특권
-                if (SelectBManager.CharacterSelect == Constants.FIRE_CHARACTER) SkillRange = 2;
+                if (SelectBManager.CharacterSelect == Constants.FIRE_CHARACTER) SkillRange = 5;
 
-                GameObject buttonGauge;
-                buttonGauge = GameObject.Find("Button_Fire");
-                if (buttonGauge.GetComponent<Image>().fillAmount >= 0.99f)
+                SoundManager.instance.PlayOneShot(Clip.UseSkill);
+
+                int currentPlayerPositionRow = StageController.p_row;
+                int currentPlayerPositionCol = StageController.p_col;
+
+                List<GameObject> damageMonsters = new List<GameObject>();
+                GameObject monster;
+
+                for (int row = currentPlayerPositionRow - SkillRange; row <= currentPlayerPositionRow + SkillRange; row++)
                 {
-                    buttonGauge.GetComponent<Image>().fillAmount = 0f;
-                    SoundManager.instance.PlayOneShot(Clip.UseSkill);
-
-                    int currentPlayerPositionRow = StageController.p_row;
-                    int currentPlayerPositionCol = StageController.p_col;
-
-                    List<GameObject> damageMonsters = new List<GameObject>();
-                    GameObject monster;
-
-                    for (int row = currentPlayerPositionRow - SkillRange; row <= currentPlayerPositionRow + SkillRange; row++)
+                    for (int col = currentPlayerPositionCol - SkillRange; col <= currentPlayerPositionCol + SkillRange; col++)
                     {
-                        for (int col = currentPlayerPositionCol - SkillRange; col <= currentPlayerPositionCol + SkillRange; col++)
+                        if (0 <= row && row < 9 && 0 <= col && col < 9)
                         {
-                            if (0 <= row && row < 9 && 0 <= col && col < 9)
+                            float rowCal = row - currentPlayerPositionRow;
+                            float colCal = col - currentPlayerPositionCol;
+                            float absX = Math.Abs(rowCal);
+                            float absY = Math.Abs(colCal);
+                            float correct = 0;
+
+                            //오른쪽
+                            if (skillDirection == Constants.DIRECTION_RIGHT)
+                            {
+                                absX = Math.Abs(rowCal);
+                                absY = Math.Abs(colCal);
+                                correct = colCal;
+                            } else
+
+                            //왼쪽
+                            if (skillDirection == Constants.DIRECTION_LEFT)
+                            {
+                                absX = Math.Abs(rowCal);
+                                absY = Math.Abs(colCal);
+                                correct = -colCal;
+                            } else
+
+                            //위
+                            if (skillDirection == Constants.DIRECTION_UP)
+                            {
+                                absX = Math.Abs(colCal);
+                                absY = Math.Abs(rowCal);
+                                correct = rowCal;
+                            } else
+
+                            //아래
+                            if (skillDirection == Constants.DIRECTION_DOWN)
+                            {
+                                absX = Math.Abs(colCal);
+                                absY = Math.Abs(rowCal);
+                                correct = -rowCal;
+                            }
+
+                            if (absX < absY && correct > 0)
                             {
                                 monster = MonsterGenerator.monsters[row, col];
                                 if (monster)
                                 {
-                                    if (monster.GetComponent<Renderer>().material.color != Constants.MONSTER_FREEZE 
-                                        && monster.transform.localScale.z != Constants.FIRE_MONSTER)
+                                    int monsterType = monster.GetComponent<MonsterBehaviour>().monsterType;
+                                    int monsterLife = monster.GetComponent<MonsterBehaviour>().monsterLife;
+
+                                    if (monster.GetComponent<Renderer>().material.color != Constants.COLOR_FREEZE
+                                        && monsterType != Constants.FIRE_MONSTER)
                                     {
                                         damageMonsters.Add(monster);
                                         Manager.instance.AddScore(100);
+                                        MonsterGenerator.monsters[row, col] = null;
                                     }
                                 }
                                 skillEffect = Instantiate(skillEffectPrefab, new Vector3(col - 4, row - 4, 0), Quaternion.identity);
-                                skillEffect.GetComponent<Renderer>().material.color = Constants.MONSTER_FIRE;
+                                skillEffect.GetComponent<Renderer>().material.color = Constants.COLOR_BURN;
                                 Destroy(skillEffect, 0.5f);
                             }
                         }
                     }
-                    damageMonsters.ForEach((monster) => MonsterBehaviour.Destroy(monster));
                 }
+                damageMonsters.ForEach((monster) => MonsterBehaviour.Destroy(monster));
             }
 
             if (inputSkillIce)
             {
                 inputSkillIce = false;
 
-                GameObject buttonGauge;
-                buttonGauge = GameObject.Find("Button_Ice");
-                if (buttonGauge.GetComponent<Image>().fillAmount >= 0.99f)
+                int SkillRange = 3;
+
+                SoundManager.instance.PlayOneShot(Clip.UseSkill);
+
+                int currentPlayerPositionRow = StageController.p_row;
+                int currentPlayerPositionCol = StageController.p_col;
+
+                List<GameObject> damageMonsters = new List<GameObject>();
+                GameObject monster;
+
+                for (int row = currentPlayerPositionRow - SkillRange; row <= currentPlayerPositionRow + SkillRange; row++)
                 {
-                    buttonGauge.GetComponent<Image>().fillAmount = 0f;
-                    SoundManager.instance.PlayOneShot(Clip.UseSkill);
-
-                    int currentPlayerPositionRow = StageController.p_row;
-                    int currentPlayerPositionCol = StageController.p_col;
-
-                    List<GameObject> damageMonsters = new List<GameObject>();
-                    GameObject monster;
-
-                    for (int row = currentPlayerPositionRow - 2; row <= currentPlayerPositionRow + 2; row++)
+                    for (int col = currentPlayerPositionCol - SkillRange; col <= currentPlayerPositionCol + SkillRange; col++)
                     {
-                        for (int col = currentPlayerPositionCol - 2; col <= currentPlayerPositionCol + 2; col++)
+                        if (0 <= row && row < 9 && 0 <= col && col < 9)
                         {
-                            if (0 <= row && row < 9 && 0 <= col && col < 9)
+                            monster = MonsterGenerator.monsters[row, col];
+                            if (monster)
                             {
-                                monster = MonsterGenerator.monsters[row, col];
-                                if (monster)
+                                int monsterType = monster.GetComponent<MonsterBehaviour>().monsterType;
+                                int monsterLife = monster.GetComponent<MonsterBehaviour>().monsterLife;
+
+                                if (monster.GetComponent<Renderer>().material.color != Constants.COLOR_FREEZE
+                                    && monsterType != Constants.ICE_MONSTER)
                                 {
-                                    if (monster.GetComponent<Renderer>().material.color != Constants.MONSTER_FREEZE
-                                        && monster.transform.localScale.z != Constants.ICE_MONSTER)
+                                    if (monsterLife == 1)
                                     {
-                                        if (monster.transform.localScale == new Vector3(0.7f, 0.7f, monster.transform.localScale.z))
-                                        {
-                                            damageMonsters.Add(monster);
-                                            Manager.instance.AddScore(100);
-                                            MonsterGenerator.monsters[row, col] = null;
-                                        }
-                                        else
-                                        {
-                                            monster.transform.localScale = new Vector3(0.7f, 0.7f, monster.transform.localScale.z);
-                                            monster.GetComponent<Renderer>().material.color = Constants.MONSTER_FREEZE;
-                                        }
+                                        damageMonsters.Add(monster);
+                                        Manager.instance.AddScore(100);
+                                        MonsterGenerator.monsters[row, col] = null;
+                                    }
+                                    else
+                                    {
+                                        monster.GetComponent<MonsterBehaviour>().MonsterLifeDecrease();
+                                        monster.GetComponent<Renderer>().material.color = Constants.COLOR_FREEZE;
                                     }
                                 }
-                                skillEffect = Instantiate(skillEffectPrefab, new Vector3(col - 4, row - 4, 0), Quaternion.identity);
-                                skillEffect.GetComponent<Renderer>().material.color = Constants.MONSTER_FREEZE;
-                                Destroy(skillEffect, 0.5f);
                             }
+                            skillEffect = Instantiate(skillEffectPrefab, new Vector3(col - 4, row - 4, 0), Quaternion.identity);
+                            skillEffect.GetComponent<Renderer>().material.color = Constants.COLOR_FREEZE;
+                            Destroy(skillEffect, 0.5f);
                         }
                     }
-                    damageMonsters.ForEach((monster) => MonsterBehaviour.Destroy(monster));
                 }
+                damageMonsters.ForEach((monster) => MonsterBehaviour.Destroy(monster));
+
             }
 
             if (inputSkillGrass)
             {
                 inputSkillGrass = false;
 
-                GameObject buttonGauge;
-                buttonGauge = GameObject.Find("Button_Grass");
-                if (buttonGauge.GetComponent<Image>().fillAmount >= 0.99f)
+                SoundManager.instance.PlayOneShot(Clip.UseSkill);
+
+                int currentPlayerPositionRow = StageController.p_row;
+                int currentPlayerPositionCol = StageController.p_col;
+
+                List<GameObject> damageMonsters = new List<GameObject>();
+
+                if (skillDirection == Constants.DIRECTION_LEFT || skillDirection == Constants.DIRECTION_RIGHT)
                 {
-                    buttonGauge.GetComponent<Image>().fillAmount = 0f;
-                    SoundManager.instance.PlayOneShot(Clip.UseSkill);
-                    int currentPlayerPositionRow = StageController.p_row;
-                    int currentPlayerPositionCol = StageController.p_col;
-
-                    List<GameObject> damageMonsters = new List<GameObject>();
-
                     for (int i = 0; i < 9; i++)
                     {
-                        int row = currentPlayerPositionRow;
-                        int col = currentPlayerPositionCol;
-                        GameObject monster = MonsterGenerator.monsters[row, i];
-                        if (monster)
+                        for (int j = -1; j <= 1; j++)
                         {
-                            if (monster.GetComponent<Renderer>().material.color != Constants.MONSTER_FREEZE
-                                && monster.transform.localScale.z != Constants.GRASS_MONSTER)
+                            int row = currentPlayerPositionRow + j;
+                            int col = currentPlayerPositionCol + j;
+
+                            //가로
+                            if (0 <= row && row < 9)
                             {
-                                if (monster.transform.localScale == new Vector3(0.7f, 0.7f, monster.transform.localScale.z))
+                                GameObject monster = MonsterGenerator.monsters[row, i];
+                                if (monster)
                                 {
-                                    damageMonsters.Add(monster);
-                                    Manager.instance.AddScore(100);
-                                    MonsterGenerator.monsters[row, i] = null;
+                                    int monsterType = monster.GetComponent<MonsterBehaviour>().monsterType;
+                                    int monsterLife = monster.GetComponent<MonsterBehaviour>().monsterLife;
+
+                                    if (monster.GetComponent<Renderer>().material.color != Constants.COLOR_FREEZE
+                                        && monsterType != Constants.GRASS_MONSTER)
+                                    {
+                                        if (monsterLife == 1)
+                                        {
+                                            damageMonsters.Add(monster);
+                                            Manager.instance.AddScore(100);
+                                            MonsterGenerator.monsters[row, i] = null;
+                                        }
+                                        else
+                                        {
+                                            monster.GetComponent<MonsterBehaviour>().MonsterLifeDecrease();
+                                            monster.GetComponent<Renderer>().material.color = Constants.COLOR_BIND;
+                                        }
+                                    }
                                 }
-                                else
-                                {
-                                    monster.transform.localScale = new Vector3(0.7f, 0.7f, monster.transform.localScale.z);
-                                    monster.GetComponent<Renderer>().material.color = Constants.MONSTER_BIND;
-                                }
+
+                                skillEffect = Instantiate(skillEffectPrefab, new Vector3(i - 4, row - 4, 0), Quaternion.identity);
+                                skillEffect.GetComponent<Renderer>().material.color = Constants.COLOR_BIND;
+                                Destroy(skillEffect, 0.5f);
                             }
                         }
-
-                        monster = MonsterGenerator.monsters[i, col];
-                        if (monster)
-                        {
-                            if (monster.GetComponent<Renderer>().material.color != Constants.MONSTER_FREEZE
-                                && monster.transform.localScale.z != Constants.GRASS_MONSTER)
-                            {
-                                if (monster.transform.localScale == new Vector3(0.7f, 0.7f, monster.transform.localScale.z))
-                                {
-                                    damageMonsters.Add(monster);
-                                    Manager.instance.AddScore(100);
-                                    MonsterGenerator.monsters[i, col] = null;
-                                }
-                                else
-                                {
-                                    monster.transform.localScale = new Vector3(0.7f, 0.7f, monster.transform.localScale.z);
-                                    monster.GetComponent<Renderer>().material.color = Constants.MONSTER_BIND;
-                                }
-                            }
-                        }
-
-                        skillEffect = Instantiate(skillEffectPrefab, new Vector3(i - 4, row - 4, 0), Quaternion.identity);
-                        skillEffect.GetComponent<Renderer>().material.color = Constants.MONSTER_BIND;
-                        Destroy(skillEffect, 0.5f);
-
-                        skillEffect = Instantiate(skillEffectPrefab, new Vector3(col - 4, i - 4, 0), Quaternion.identity);
-                        skillEffect.GetComponent<Renderer>().material.color = Constants.MONSTER_BIND;
-                        Destroy(skillEffect, 0.5f);
                     }
-
-                    damageMonsters.ForEach((monster) => MonsterBehaviour.Destroy(monster));
                 }
+
+                if (skillDirection == Constants.DIRECTION_UP || skillDirection == Constants.DIRECTION_DOWN)
+                {
+                    for (int i = 0; i < 9; i++)
+                    {
+                        for (int j = -1; j <= 1; j++)
+                        {
+                            int row = currentPlayerPositionRow + j;
+                            int col = currentPlayerPositionCol + j;
+
+                            //세로
+                            if (0 <= col && col < 9)
+                            {
+                                monster = MonsterGenerator.monsters[i, col];
+                                if (monster)
+                                {
+                                    int monsterType = monster.GetComponent<MonsterBehaviour>().monsterType;
+                                    int monsterLife = monster.GetComponent<MonsterBehaviour>().monsterLife;
+
+                                    if (monster.GetComponent<Renderer>().material.color != Constants.COLOR_FREEZE
+                                        && monsterType != Constants.GRASS_MONSTER)
+                                    {
+                                        if (monsterLife == 1)
+                                        {
+                                            damageMonsters.Add(monster);
+                                            Manager.instance.AddScore(100);
+                                            MonsterGenerator.monsters[row, i] = null;
+                                        }
+                                        else
+                                        {
+                                            monster.GetComponent<MonsterBehaviour>().MonsterLifeDecrease();
+                                            monster.GetComponent<Renderer>().material.color = Constants.COLOR_BIND;
+                                        }
+                                    }
+                                }
+
+                                skillEffect = Instantiate(skillEffectPrefab, new Vector3(col - 4, i - 4, 0), Quaternion.identity);
+                                skillEffect.GetComponent<Renderer>().material.color = Constants.COLOR_BIND;
+                                Destroy(skillEffect, 0.5f);
+                            }
+                        }
+                    }
+                }
+
+
+                damageMonsters.ForEach((monster) => MonsterBehaviour.Destroy(monster));
             }
 
             if (inputSkillLight)
             {
                 inputSkillLight = false;
 
-                GameObject buttonGauge;
-                buttonGauge = GameObject.Find("Button_Light");
-                if (buttonGauge.GetComponent<Image>().fillAmount >= 0.99f)
+                SoundManager.instance.PlayOneShot(Clip.LifeUP);
+
+                GameObject lifeControl = GameObject.Find("LifeControl");
+                lifeControl.GetComponent<LifeControl>().increaseHp();
+                lifeControl.GetComponent<LifeControl>().increaseHp();
+
+                //빛 캐릭터 특권
+                if (SelectBManager.CharacterSelect == Constants.LIGHT_CHARACTER)
                 {
-                    buttonGauge.GetComponent<Image>().fillAmount = 0f;
-                    SoundManager.instance.PlayOneShot(Clip.LifeUP);
-
-                    GameObject lifeControl = GameObject.Find("LifeControl");
                     lifeControl.GetComponent<LifeControl>().increaseHp();
-
-                    //빛 캐릭터 특권
-                    if (SelectBManager.CharacterSelect == Constants.LIGHT_CHARACTER)
-                    {
-                        lifeControl.GetComponent<LifeControl>().increaseHp();
-                    }
+                    lifeControl.GetComponent<LifeControl>().increaseHp();
                 }
             }
 
@@ -408,40 +484,130 @@ namespace Ninez.Board
             {
                 inputSkillDark = false;
 
-                GameObject buttonGauge;
-                buttonGauge = GameObject.Find("Button_Dark");
-                if (buttonGauge.GetComponent<Image>().fillAmount >= 0.99f)
+                SoundManager.instance.PlayOneShot(Clip.UseSkill);
+
+                GameObject monster;
+
+                for (int row = 0; row < 9; row++)
                 {
-                    buttonGauge.GetComponent<Image>().fillAmount = 0f;
-                    SoundManager.instance.PlayOneShot(Clip.UseSkill);
-
-                    GameObject monster;
-
-                    for (int row = 0; row < 9; row++)
+                    for (int col = 0; col < 9; col++)
                     {
-                        for (int col = 0; col < 9; col++)
+                        monster = MonsterGenerator.monsters[row, col];
+                        if (monster)
                         {
-                            monster = MonsterGenerator.monsters[row, col];
-                            if (monster)
+                            int monsterType = monster.GetComponent<MonsterBehaviour>().monsterType;
+
+                            if (monster.GetComponent<Renderer>().material.color != Constants.COLOR_FREEZE
+                                && monsterType != Constants.DARK_MONSTER)
                             {
-                                if (monster.GetComponent<Renderer>().material.color != Constants.MONSTER_FREEZE
-                                    && monster.transform.localScale.z != Constants.DARK_MONSTER)
-                                {
-                                    monster.GetComponent<Renderer>().material.color = Constants.MONSTER_FEAR;
-                                }
+                                monster.GetComponent<Renderer>().material.color = Constants.COLOR_FEAR;
                             }
                         }
                     }
                 }
             }
 
+            if (inputSkill)
+            {
+                inputSkill = false;
+
+                if (SkillPortionGenerator.skillGameObject[0])
+                {
+                    float kindSkill = SkillPortionGenerator.skillGameObject[0].transform.localScale.z;
+
+                    if (kindSkill == Constants.SKILLPORTION_FIRE) inputSkillFire = true;
+                    if (kindSkill == Constants.SKILLPORTION_ICE) inputSkillIce = true;
+                    if (kindSkill == Constants.SKILLPORTION_GRASS) inputSkillGrass = true;
+                    if (kindSkill == Constants.SKILLPORTION_LIGHT) inputSkillLight = true;
+                    if (kindSkill == Constants.SKILLPORTION_DARK) inputSkillDark = true;
+
+                    Destroy(SkillPortionGenerator.skillGameObject[0]);
+                    SkillPortionGenerator.skillGameObject[0] = null;
+
+                    GameObject.FindGameObjectWithTag("SkillPortionGenerator").GetComponent<SkillPortionGenerator>().SkillPullSort();
+                }
+            }
+
+            if (inputKick)
+            {
+                if (playerBulletLimit == 0)
+                {
+                    inputKick = false;
+                    return;
+                }
+
+                playerBulletLimit--;
+
+                bullet = Instantiate(bulletFire, transform.position, transform.rotation);
+                BulletChange();
+
+                Rigidbody2D rigidBody = bullet.GetComponent<Rigidbody2D>();
+                
+                if (kickDirection == Constants.DIRECTION_DOWN) rigidBody.AddForce(Vector2.down * 5, ForceMode2D.Impulse);
+                if (kickDirection == Constants.DIRECTION_UP) rigidBody.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+                if (kickDirection == Constants.DIRECTION_LEFT) rigidBody.AddForce(Vector2.left * 5, ForceMode2D.Impulse);
+                if (kickDirection == Constants.DIRECTION_RIGHT) rigidBody.AddForce(Vector2.right * 5, ForceMode2D.Impulse);
+
+                inputKick = false;
+            }
             
-            //충돌 시 깜빡임
+            //충돌 시 무적
             if (playerDamaged)
             {
                 StartCoroutine(PlayerBlink());
             }
             
+        }
+
+        void BulletChange()
+        {
+            int bulletBreed = Stage.Stage.bulletBreed;
+
+            float bulletSize = 1f;
+
+            if (bulletBreed == Constants.BLOCK_FIRE)
+            {
+                bullet.GetComponent<SpriteRenderer>().sprite = bulletFire.GetComponent<SpriteRenderer>().sprite;
+                bullet.transform.localScale = new Vector3(bulletSize, bulletSize, Constants.BULLET_FIRE);
+            }
+
+            if (bulletBreed == Constants.BLOCK_ICE)
+            {
+                bullet.GetComponent<SpriteRenderer>().sprite = bulletIce.GetComponent<SpriteRenderer>().sprite;
+                bullet.transform.localScale = new Vector3(bulletSize, bulletSize, Constants.BULLET_ICE);
+            }
+
+            if (bulletBreed == Constants.BLOCK_GRASS)
+            {
+                bullet.GetComponent<SpriteRenderer>().sprite = bulletGrass.GetComponent<SpriteRenderer>().sprite;
+                bullet.transform.localScale = new Vector3(bulletSize, bulletSize, Constants.BULLET_GRASS);
+            }
+
+            if (bulletBreed == Constants.BLOCK_LIGHT)
+            {
+                bullet.GetComponent<SpriteRenderer>().sprite = bulletLight.GetComponent<SpriteRenderer>().sprite;
+                bullet.transform.localScale = new Vector3(bulletSize, bulletSize, Constants.BULLET_LIGHT);
+            }
+
+            if (bulletBreed == Constants.BLOCK_DARK)
+            {
+                bullet.GetComponent<SpriteRenderer>().sprite = bulletDark.GetComponent<SpriteRenderer>().sprite;
+                bullet.transform.localScale = new Vector3(bulletSize, bulletSize, Constants.BULLET_DARK);
+            }
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if(collision.gameObject.tag == "SkillPortion")
+            {
+                if (collision.transform.localScale.z == Constants.SKILLPORTION_FIRE) inputSkillFire = true;
+                if (collision.transform.localScale.z == Constants.SKILLPORTION_ICE) inputSkillIce = true;
+                if (collision.transform.localScale.z == Constants.SKILLPORTION_GRASS) inputSkillGrass = true;
+                if (collision.transform.localScale.z == Constants.SKILLPORTION_LIGHT) inputSkillLight = true;
+                if (collision.transform.localScale.z == Constants.SKILLPORTION_DARK) inputSkillDark = true;
+
+                Destroy(collision.gameObject);
+            }
         }
 
         public IEnumerator PlayerBlink()
@@ -463,7 +629,6 @@ namespace Ninez.Board
                 isBlink = false;
             }
         }
-
         public void PlayerMove(Vector2 vtMoveDistance)
         {
             m_MovementQueue.Enqueue(new Vector3(vtMoveDistance.x, vtMoveDistance.y, 1));
@@ -498,4 +663,3 @@ namespace Ninez.Board
         }
     }
 }
-

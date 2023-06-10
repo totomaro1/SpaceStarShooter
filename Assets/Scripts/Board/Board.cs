@@ -2,13 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Quest;
-using Ninez.Util;
-using Ninez.Stage;
-using Ninez.Core;
+using Totomaro.Quest;
+using Totomaro.Util;
+using Totomaro.Stage;
+using Totomaro.Core;
 using UnityEngine.UI;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     using IntIntKV = KeyValuePair<int, int>;
 
@@ -35,6 +35,8 @@ namespace Ninez.Board
         StageBuilder m_StageBuilder;
 
         BoardEnumerator m_Enumerator;
+
+        public static int bulletBreed;
 
         public Board(int nRow, int nCol)
         {
@@ -158,85 +160,94 @@ namespace Ninez.Board
         public void DamageToMonster(List<GameObject> damageMonsters,int nRow, int nCol)
         {
             GameObject monster = MonsterGenerator.monsters[nRow, nCol];
+
             if (monster)
             {
-                float MonsterBreed = 0;
+                int monsterType = monster.GetComponent<MonsterBehaviour>().monsterType;
+                Color monsterColor = monster.GetComponent<Renderer>().material.color;
 
-                if (monster.transform.localScale.z == Constants.NORMAL_MONSTER) MonsterBreed = Constants.NORMAL_MONSTER;
+                float MonsterBreed = Constants.BASIC_MONSTER;
 
-                if (monster.transform.localScale.z == Constants.FIRE_MONSTER)
+                if (monsterType == Constants.FIRE_MONSTER)
                 {
                     if (m_Blocks[nRow, nCol].breed != (BlockBreed)Constants.BLOCK_FIRE) MonsterBreed = Constants.FIRE_MONSTER;
                     else MonsterBreed = Constants.X_MONSTER;
                 }
 
-                if (monster.transform.localScale.z == Constants.ICE_MONSTER)
+                if (monsterType == Constants.ICE_MONSTER)
                 {
                     if (m_Blocks[nRow, nCol].breed != (BlockBreed)Constants.BLOCK_ICE) MonsterBreed = Constants.ICE_MONSTER;
                     else MonsterBreed = Constants.X_MONSTER;
                 }
 
-                if (monster.transform.localScale.z == Constants.GRASS_MONSTER)
+                if (monsterType == Constants.GRASS_MONSTER)
                 {
                     if (m_Blocks[nRow, nCol].breed != (BlockBreed)Constants.BLOCK_GRASS) MonsterBreed = Constants.GRASS_MONSTER;
                     else MonsterBreed = Constants.X_MONSTER;
                 }
 
-                if (monster.transform.localScale.z == Constants.LIGHT_MONSTER)
+                if (monsterType == Constants.LIGHT_MONSTER)
                 {
                     if (m_Blocks[nRow, nCol].breed != (BlockBreed)Constants.BLOCK_LIGHT) MonsterBreed = Constants.LIGHT_MONSTER;
                     else MonsterBreed = Constants.X_MONSTER;
                 }
 
-                if (monster.transform.localScale.z == Constants.DARK_MONSTER)
+                if (monsterType == Constants.DARK_MONSTER)
                 {
                     if (m_Blocks[nRow, nCol].breed != (BlockBreed)Constants.BLOCK_DARK) MonsterBreed = Constants.DARK_MONSTER;
                     else MonsterBreed = Constants.X_MONSTER;
                 }
 
-                //(빙결 상태의 몬스터는 제거할 수 없음)
-                if (monster.GetComponent<Renderer>().material.color != Constants.MONSTER_FREEZE && MonsterBreed != Constants.X_MONSTER)
+                if(monsterType == Constants.BOSS_MONSTER)
                 {
-                    //제거 (불 속성은 바로 제거)
-                    if (monster.transform.localScale == new Vector3(0.7f, 0.7f, MonsterBreed) ||
-                    m_Blocks[nRow, nCol].breed == (BlockBreed)Constants.BLOCK_FIRE)
-                    {
-                        if (monster != null)
-                        {
-                            damageMonsters.Add(monster);
-                            Manager.instance.AddScore(100);
+                    MonsterBreed = Constants.BOSS_MONSTER;
+                }
 
-                            MonsterGenerator.monsters[nRow, nCol] = null; //보드에서 몬스터 제거 (몬스터 객체 제거 X)
+                //(빙결 상태의 몬스터는 제거할 수 없음)
+                if (monsterColor != Constants.COLOR_FREEZE)
+                {
+                    //속성 면역 몬스터
+                    if (MonsterBreed != Constants.X_MONSTER)
+                    {
+                        //제거 (불 속성은 바로 제거)
+                        if (m_Blocks[nRow, nCol].breed == (BlockBreed)Constants.BLOCK_FIRE)
+                        {
+                            monster.GetComponent<MonsterBehaviour>().MonsterLifeDestroy();
+                        }
+                        else
+                        {
+                            //라이프 감소
+                            monster.GetComponent<MonsterBehaviour>().MonsterLifeDecrease();
+                            GiveMonsterCrowdControl(monsterColor, nRow, nCol);
                         }
                     }
+                    //(같은 속성(X_MONSTER) 몬스터 라이프 증가)
                     else
                     {
-                        //라이프 감소
-                        monster.transform.localScale = new Vector3(0.7f, 0.7f, MonsterBreed);
-                        GiveMonsterCrowdControl(monster, nRow, nCol);
+                        monster.GetComponent<MonsterBehaviour>().MonsterLifeIncrease();
                     }
                 }
             }
         }
 
-        public void GiveMonsterCrowdControl(GameObject monster, int nRow, int nCol)
+        public void GiveMonsterCrowdControl(Color monsterColor, int nRow, int nCol)
         {
             //상태이상 빙결
             if (m_Blocks[nRow, nCol].breed == (BlockBreed)Constants.BLOCK_ICE)
             {
-                monster.GetComponent<Renderer>().material.color = Constants.MONSTER_FREEZE;
+                monsterColor = Constants.COLOR_FREEZE;
             }
 
             //상태이상 속박
             if (m_Blocks[nRow, nCol].breed == (BlockBreed)Constants.BLOCK_GRASS)
             {
-                monster.GetComponent<Renderer>().material.color = Constants.MONSTER_BIND;
+                monsterColor = Constants.COLOR_BIND;
             }
 
             //상태이상 공포
             if (m_Blocks[nRow, nCol].breed == (BlockBreed)Constants.BLOCK_DARK)
             {
-                monster.GetComponent<Renderer>().material.color = Constants.MONSTER_FEAR;
+                monsterColor = Constants.COLOR_FEAR;
             }
         }
 
@@ -329,10 +340,10 @@ namespace Ninez.Board
         {
             GameObject buttonGauge;
 
-            float skillCharge = 0.025f;
+            float skillCharge = 0.02f;
 
             //기본 캐릭터 특권
-            if (SelectBManager.CharacterSelect == Constants.BASIC_CHARACTER) skillCharge = 0.03125f;
+            if (SelectBManager.CharacterSelect == Constants.BASIC_CHARACTER) skillCharge = 0.025f;
 
             if (m_Blocks[nRow, nCol].breed == (BlockBreed)Constants.BLOCK_FIRE)
             {
@@ -399,7 +410,7 @@ namespace Ninez.Board
             if (baseBlock == null)
                 return false;
 
-            if (baseBlock.match != Ninez.Quest.MatchType.NONE || !baseBlock.IsValidate() || m_Cells[nRow, nCol].IsObstracle())
+            if (baseBlock.match != Totomaro.Quest.MatchType.NONE || !baseBlock.IsValidate() || m_Cells[nRow, nCol].IsObstracle())
                 return false;
 
             //검사하는 자신을 매칭 리스트에 우선 보관한다.
@@ -542,7 +553,6 @@ namespace Ninez.Board
             return block;
         }
 
-
         /// <summary>
         /// 퍼즐의 시작 X 위치를 구한다, left - top좌표
         /// </summary>
@@ -581,7 +591,7 @@ namespace Ninez.Board
 
             while (true)
             {
-                genBreed = (BlockBreed)UnityEngine.Random.Range(0, 6); //TODO 스테이지파일에서 Spawn 정책을 이용해야함
+                genBreed = (BlockBreed)UnityEngine.Random.Range(0, 5); //TODO 스테이지파일에서 Spawn 정책을 이용해야함
 
                 if (notAllowedBreed == genBreed)
                     continue;

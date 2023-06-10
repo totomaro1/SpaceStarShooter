@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Ninez.Board;
+using Totomaro.Board;
 using UnityEngine;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     public class CellBehaviour : MonoBehaviour
     {

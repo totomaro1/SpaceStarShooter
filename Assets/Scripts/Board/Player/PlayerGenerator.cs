@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Quest;
-using Ninez.Util;
-using Ninez.Stage;
-using Ninez.Core;
+using Totomaro.Quest;
+using Totomaro.Util;
+using Totomaro.Stage;
+using Totomaro.Core;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     public class PlayerGenerator : MonoBehaviour
     {
@@ -23,7 +23,7 @@ namespace Ninez.Board
         public static GameObject[,] players = new GameObject[9, 9];
 
         public static int playerx = 0;
-        public static int playery = 4;
+        public static int playery = 0;
 
         //플레이어의 스폰 위치를 지정하고 생성
         private void Start()

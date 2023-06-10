@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Ninez.Util;
+using Totomaro.Util;
 using UnityEngine.SceneManagement;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     public class TitleButtonBehaviour : MonoBehaviour
     {

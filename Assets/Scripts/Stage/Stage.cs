@@ -1,26 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Board;
-using Ninez.Util;
-using Ninez.Core;
+using Totomaro.Board;
+using Totomaro.Util;
+using Totomaro.Core;
 using System;
 
-namespace Ninez.Stage
+namespace Totomaro.Stage
 {
     public class Stage
     {
         public int maxRow { get { return m_Board.maxRow; } }
         public int maxCol { get { return m_Board.maxCol; } }
 
-        Ninez.Board.Board m_Board;
-        public Ninez.Board.Board board { get { return m_Board; } }
+        Totomaro.Board.Board m_Board;
+        public Totomaro.Board.Board board { get { return m_Board; } }
 
         StageBuilder m_StageBuilder;
 
         public Block[,] blocks { get { return m_Board.blocks; } }
         public Cell[,] cells { get { return m_Board.cells; } }
-        
+
+        public static int bulletBreed;
+        public static int skillBreed;
+
         /// <summary>
         /// 생성자.
         /// 주어진 크기를 갖는 Board를 생성한다.
@@ -32,7 +35,7 @@ namespace Ninez.Stage
         {
             m_StageBuilder = stageBuilder;
 
-            m_Board = new Ninez.Board.Board(nRow, nCol);
+            m_Board = new Totomaro.Board.Board(nRow, nCol);
         }
 
         /// <summary>
@@ -58,6 +61,8 @@ namespace Ninez.Stage
             nSwipeRow += swipeDir.GetTargetRow(); //Right : +1, LEFT : -1
             nSwipeCol += swipeDir.GetTargetCol(); //UP : +1, DOWN : -1
 
+            bool firstSwipe = true;
+
             //while(!(nSwipeCol < 0 || nSwipeCol > 8 || nSwipeRow < 0 || nSwipeRow > 8))
             //while (IsValideSwipe(nRow, nCol, swipeDir))
             while (IsValideSwipe(nRow, nCol, swipeDir))
@@ -74,6 +79,12 @@ namespace Ninez.Stage
                     Block targetBlock = blocks[nSwipeRow, nSwipeCol];
                     Block baseBlock = blocks[nRow, nCol];
                     Debug.Assert(baseBlock != null && targetBlock != null);
+
+                    if (firstSwipe)
+                    {
+                        firstSwipe = false;
+                        bulletBreed = (int)baseBlock.breed;
+                    }
 
                     Vector3 basePos = baseBlock.blockObj.transform.position;
                     Vector3 targetPos = targetBlock.blockObj.transform.position;
@@ -103,6 +114,16 @@ namespace Ninez.Stage
                 nSwipeCol += swipeDir.GetTargetCol(); //UP : +1, DOWN : -1  
             }
 
+            yield break;
+        }
+
+        public IEnumerator CoDoSkillAction(int nRow, int nCol)
+        {
+            if(blocks[nRow, nCol] != null)
+            {
+                Block skillBlock = blocks[nRow, nCol];
+                skillBreed = (int)skillBlock.breed;
+            }
             yield break;
         }
 

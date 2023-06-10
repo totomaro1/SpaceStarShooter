@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ninez.Util
+namespace Totomaro.Util
 {
     public static class Action2D
     {

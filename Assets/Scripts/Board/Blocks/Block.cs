@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Quest;
+using Totomaro.Quest;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     public class Block
     {

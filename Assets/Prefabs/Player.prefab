@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 8379735591849711338}
   - component: {fileID: 8379735591849711339}
   - component: {fileID: 8254900707930583736}
+  - component: {fileID: 5418798732342693227}
+  - component: {fileID: 5847788641986077180}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -71,7 +73,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 184376645
-  m_SortingLayer: 5
+  m_SortingLayer: 7
   m_SortingOrder: 1
   m_Sprite: {fileID: -4386244321797546708, guid: f40921cbf322bfa4d9a55f56f5bfb0a7,
     type: 3}
@@ -122,6 +124,7 @@ MonoBehaviour:
   inputDown: 0
   inputKick: 0
   inputMove: 0
+  inputSkill: 0
   inputSkillFire: 0
   inputSkillIce: 0
   inputSkillGrass: 0
@@ -129,7 +132,56 @@ MonoBehaviour:
   inputSkillDark: 0
   direction: 0
   PrevDirection: 0
+  kickDirection: 0
+  bulletFire: {fileID: 4701147489389463035, guid: ea007d4bc2a3cca4ebf402506ee8b774,
+    type: 3}
+  bulletIce: {fileID: 4701147489389463035, guid: b0b4e024e56aa8d439fa3726f14699af,
+    type: 3}
+  bulletGrass: {fileID: 4701147489389463035, guid: 7d4155eddae45984ea6c9c53832f1d45,
+    type: 3}
+  bulletLight: {fileID: 4701147489389463035, guid: 4f2fddb5dfb68a244ba052b9f8affde1,
+    type: 3}
+  bulletDark: {fileID: 4701147489389463035, guid: 3785fc28d8ca7cc48b95dd6e9e3ec37d,
+    type: 3}
+  playerBulletLimit: 0
   playerCol: 0
   playerRow: 0
   skillEffectPrefab: {fileID: 6915082817537180214, guid: 0cd399ddbfff2714b9cfc2e681771546,
     type: 3}
+--- !u!58 &5418798732342693227
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8379735591849711337}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5555556
+--- !u!50 &5847788641986077180
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8379735591849711337}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

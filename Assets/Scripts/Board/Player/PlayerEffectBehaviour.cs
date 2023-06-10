@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using Ninez.Board;
-using Ninez.Core;
-using Ninez.Stage;
-using Ninez.Util;
+using Totomaro.Board;
+using Totomaro.Core;
+using Totomaro.Stage;
+using Totomaro.Util;
 
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     public class PlayerEffectBehaviour : MonoBehaviour
     {
@@ -74,7 +74,7 @@ namespace Ninez.Board
                 inputLeft = false;
                 PrevDirection = direction;
 
-                if (direction == Constants.PLAYERMOVE_LEFT)
+                if (direction == Constants.DIRECTION_LEFT)
                 {
                     int nCol = PlayerGenerator.playerx + 4;
                     int nRow = PlayerGenerator.playery + 4;
@@ -92,7 +92,7 @@ namespace Ninez.Board
                 inputRight = false;
                 PrevDirection = direction;
 
-                if (direction == Constants.PLAYERMOVE_RIGHT)
+                if (direction == Constants.DIRECTION_RIGHT)
                 {
                     int nCol = PlayerGenerator.playerx + 4;
                     int nRow = PlayerGenerator.playery + 4;
@@ -111,7 +111,7 @@ namespace Ninez.Board
                 inputUp = false;
                 PrevDirection = direction;
 
-                if (direction == Constants.PLAYERMOVE_UP)
+                if (direction == Constants.DIRECTION_UP)
                 {
                     int nCol = PlayerGenerator.playerx + 4;
                     int nRow = PlayerGenerator.playery + 4;
@@ -132,7 +132,7 @@ namespace Ninez.Board
 
                 SoundManager.instance.PlayOneShot(Clip.CharacterButton);
 
-                if (direction == Constants.PLAYERMOVE_DOWN)
+                if (direction == Constants.DIRECTION_DOWN)
                 {
                     int nCol = PlayerGenerator.playerx + 4;
                     int nRow = PlayerGenerator.playery + 4;

@@ -1,10 +1,10 @@
-﻿using Ninez.Board;
+﻿using Totomaro.Board;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ninez.Core;
+using Totomaro.Core;
 
-namespace Ninez.Util
+namespace Totomaro.Util
 {
     public class PlayBgmManager : MonoBehaviour
     {

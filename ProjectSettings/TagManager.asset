@@ -8,6 +8,11 @@ TagManager:
   - Monster
   - PlayerEffect
   - Bgm
+  - enemyBullet
+  - Bullet
+  - Block
+  - SkillPortion
+  - SkillPortionGenerator
   layers:
   - Default
   - TransparentFX
@@ -54,6 +59,9 @@ TagManager:
   - name: Block
     uniqueID: 1726822053
     locked: 0
+  - name: SkillPortion
+    uniqueID: 3727984743
+    locked: 0
   - name: Monster
     uniqueID: 2628382941
     locked: 0
@@ -62,4 +70,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 184376645
+    locked: 0
+  - name: Bullet
+    uniqueID: 2013838969
     locked: 0

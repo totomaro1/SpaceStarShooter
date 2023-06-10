@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Ninez.Board
+namespace Totomaro.Board
 {
     public class Manager : MonoBehaviour
     {

@@ -1,9 +1,9 @@
-﻿using Ninez.Board;
+﻿using Totomaro.Board;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ninez.Util
+namespace Totomaro.Util
 {
     public class BgmManager : MonoBehaviour
     {
